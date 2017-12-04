@@ -44,7 +44,6 @@ ax1 = plt.subplot2grid((6,1), (0,0), rowspan=5, colspan=1) # 6x1 is the grid siz
 ax2 = plt.subplot2grid((6,1), (5,0), rowspan=1, colspan=1, sharex=ax1)
 ax1.xaxis_date()
 
-print(df_ohlc.head())
 candlestick_ohlc(ax1, df_ohlc.values, width=2, colorup='g')
 ax2.fill_between(df_volume.index.map(mdates.date2num),df_volume.values,0)
 plt.show() #show dataframe
