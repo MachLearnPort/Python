@@ -6,6 +6,10 @@ import pandas_datareader.data as web
 import pickle
 import requests
 import fix_yahoo_finance #Had to add as their was an issue reteriving the data
+import matplotlib.pyplot as plt
+from matplotlib import style
+
+style.use('ggplot')
 
 def save_sp500_tickers(): #function for getting the ticker names
     resp = requests.get('http://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
@@ -50,7 +54,7 @@ def get_data_from_yahoo(reload_sp500=False): #function for getting the ticker da
       print('Already have {}'. format(ticker))
   print(nowork) 
 
-get_data_from_yahoo()
+# get_data_from_yahoo()
 
 def compile_data():
     with open("sp500tickers.pickle","rb") as f:
@@ -75,5 +79,12 @@ def compile_data():
     print(main_df.head())
     main_df.to_csv('sp500_joined_closes.csv')
 
+# NOTE - you need to put the header in the top of the 1KB files
+# compile_data()
 
-compile_data()
+def visualize_data():
+    df = pd.read_csv('sp500_joined_closes.csv')
+    df['AAPL'].plot()
+    plt.show()
+
+visualize_data()

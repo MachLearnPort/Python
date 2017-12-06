@@ -33,12 +33,14 @@ def get_data_from_google(reload_sp500=False):
     
     if not os.path.exists('stock_dfs'):#check if directory exists
         os.makedirs('stock_dfs')#if not, create new directory
-        
+
     start = dt.datetime(2000,1,1)
-    end = dt.datetime(2017,11,1)
-    
+    today = dt.datetime.today()
+    end = dt.datetime(today.year, today.month, today.day)
+
+
     for ticker in tickers: #loop through ticker list
-        query_name = 'sp500:{}'.format(ticker) #specify exchange, can be further extentiated for nonNYSE stocks
+        query_name = 'NYSE:{}'.format(ticker) #specify exchange, can be further extentiated for nonNYSE stocks
         if not os.path.exists('stock_dfs/{}.csv'.format(ticker)): #if file doesn't exist
             try:
                 df = web.DataReader(query_name,'google',start,end) #query google for historical data
@@ -47,7 +49,10 @@ def get_data_from_google(reload_sp500=False):
                 df = web.DataReader(ticker,'google',start,end) #query google for historical data
                 df.to_csv('stock_dfs/{}.csv'.format(ticker)) #save csv of data  
         else:
-            print('Already have {}'.format(ticker))
+            try:
+                print('Already have {}'.format(ticker))
+            except:
+                print('Cannot obtain data for ' +ticker)
 
 get_data_from_google()
 
@@ -75,9 +80,8 @@ def compile_data():
 
 
         if count % 10 == 0:
-            print(count)
+                print(count)
 
     print(main_df.head())
     main_df.to_csv('sp500_joined_closes.csv')
-
 compile_data()
