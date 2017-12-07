@@ -2,6 +2,7 @@ import bs4 as bs
 import datetime as dt
 import os #Misc operating system interfaces
 import pandas as pd
+import numpy as np
 import pandas_datareader.data as web 
 import pickle
 import requests
@@ -84,7 +85,36 @@ def compile_data():
 
 def visualize_data():
     df = pd.read_csv('sp500_joined_closes.csv')
-    df['AAPL'].plot()
+    # df['AAPL'].plot()
+    # plt.show()
+    df_corr = df.corr() #Correlation matrix (Pearson)
+    # These correaltions can be used for pair wise trading straegies like convergence trading
+    # Also, having a diverse portfolio means investing in non-correlated stocks
+    # however, it is best to correlate between stock return and not stock prices, since
+    # stock returns are more likely to follow a normal distribution
+
+    print(df_corr.head())
+
+    #Set up a heat map of the correlation values (correlation table)
+    data1 = df_corr.values #gives the inner values (i.e. no headers)
+    fig1 = plt.figure()
+    ax1 = fig1.add_subplot(1,1,1)
+
+    heatmap1 = ax1.pcolor(data1, cmap=plt.cm.RdYlGn)
+    fig1.colorbar(heatmap1)
+    ax1.set_xticks(np.arange(data1.shape[0])+0.5, minor=False) #Put in ticks at every half mark so we can identify where we get people
+    ax1.set_yticks(np.arange(data1.shape[1])+0.5, minor=False)
+    ax1.invert_yaxis() # to get rid of the room at the top of the chart
+    ax1.xaxis.tick_top() #Makes it look better - to make it more like a table
+
+    column_labels = df_corr.columns
+    row_labels = df_corr.index
+
+    ax1.set_xticklabels(column_labels)
+    ax1.set_yticklabels(row_labels)
+    plt.xticks(rotation=90)
+    heatmap1.set_clim(-1,1) #Scales the correlation between the maximum of the Pearson (i.e. -1 and 1)
+    plt.tight_layout()
     plt.show()
 
 visualize_data()
